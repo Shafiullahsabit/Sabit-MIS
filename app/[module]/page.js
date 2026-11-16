@@ -25,5 +25,5 @@ export default async function ModulePage({ params }) {
     notFound();
   }
 
-  return <ModulePlaceholder module={currentModule} />;
+  return <ModulePlaceholder moduleKey={currentModule.key} />;
 }

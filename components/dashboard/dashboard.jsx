@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ArrowDownRight,
   ArrowRight,
@@ -15,6 +17,7 @@ import { RevenueChart } from "@/components/dashboard/revenue-chart";
 import { RecentSales } from "@/components/dashboard/recent-sales";
 import { bestSellers, dashboardStats, lowStockProducts } from "@/lib/sample-data";
 import { formatAFN } from "@/lib/format";
+import { useLocale } from "@/components/providers/locale-provider";
 
 const statIcons = {
   revenue: CircleDollarSign,
@@ -22,41 +25,44 @@ const statIcons = {
   average: ReceiptText,
   stock: Boxes,
 };
+const stockCount = dashboardStats.find((stat) => stat.key === "stock").value;
 
 export function Dashboard() {
+  const { numberLocale, t } = useLocale();
+
   return (
     <div className="space-y-7">
       <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
-          <div className="mb-2 inline-flex items-center gap-1.5 text-[11px] font-medium text-[#78847a]">
-            <Sparkles className="text-[#8da47e]" size={13} />
-            Monday, November 16, 2026
+          <div className="mb-2 inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+            <Sparkles className="text-accent" size={13} />
+            {t("dashboard.todayOverview")}
           </div>
-          <h1 className="text-[26px] font-semibold tracking-[-0.04em] text-[#233329] sm:text-[30px]">
-            Good morning, Sabit
+          <h1 className="text-[26px] font-semibold tracking-[-0.04em] text-foreground sm:text-[30px]">
+            {t("dashboard.greeting")}
           </h1>
-          <p className="mt-1.5 text-sm text-[#7b867d]">
-            Here&apos;s what&apos;s happening at your store today.
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            {t("dashboard.welcome")}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button asChild className="w-full sm:w-auto" variant="outline">
             <Link href="/reports">
               <ReceiptText size={15} />
-              Today&apos;s summary
+              {t("dashboard.todaySummary")}
             </Link>
           </Button>
           <Button asChild className="w-full sm:w-auto">
             <Link href="/pos">
               <ShoppingBag size={15} />
-              New sale
+              {t("dashboard.newSale")}
             </Link>
           </Button>
         </div>
       </section>
 
       <section
-        aria-label="Key store metrics"
+        aria-label={t("dashboard.keyMetrics")}
         className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
       >
         {dashboardStats.map((stat) => {
@@ -68,16 +74,16 @@ export function Dashboard() {
               <CardContent className="p-5">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-xs font-medium text-[#7c887e]">
-                      {stat.label}
+                    <p className="text-xs font-medium text-muted-foreground">
+                      {t(`dashboard.${stat.key}`)}
                     </p>
-                    <p className="mt-3 text-[25px] font-semibold tracking-[-0.04em] text-[#25352a]">
+                    <p className="mt-3 text-[25px] font-semibold tracking-[-0.04em] text-foreground">
                       {stat.key === "revenue" || stat.key === "average"
-                        ? formatAFN(stat.value)
-                        : stat.value.toLocaleString("en-US")}
+                        ? formatAFN(stat.value, numberLocale)
+                        : stat.value.toLocaleString(numberLocale)}
                     </p>
                   </div>
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0f5ed] text-[#557d5b]">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-soft text-accent">
                     <Icon size={18} strokeWidth={1.8} />
                   </span>
                 </div>
@@ -85,8 +91,8 @@ export function Dashboard() {
                   <span
                     className={
                       positive
-                        ? "inline-flex items-center gap-0.5 text-[11px] font-semibold text-[#468453]"
-                        : "inline-flex items-center gap-0.5 text-[11px] font-semibold text-[#ba7953]"
+                        ? "inline-flex items-center gap-0.5 text-[11px] font-semibold text-positive"
+                        : "inline-flex items-center gap-0.5 text-[11px] font-semibold text-warning"
                     }
                   >
                     {positive ? (
@@ -94,10 +100,19 @@ export function Dashboard() {
                     ) : (
                       <ArrowDownRight size={13} />
                     )}
-                    {stat.trend}
+                    {stat.key === "stock"
+                      ? t("dashboard.attentionCount")
+                      : new Intl.NumberFormat(numberLocale, {
+                          maximumFractionDigits: 1,
+                          style: "percent",
+                        }).format(stat.trend)}
                   </span>
-                  <span className="text-[11px] text-[#9aa39b]">
-                    {stat.comparison || "vs. yesterday"}
+                  <span className="text-[11px] text-muted-foreground">
+                    {t(
+                      stat.key === "stock"
+                        ? "dashboard.reviewToday"
+                        : "dashboard.vsYesterday",
+                    )}
                   </span>
                 </div>
               </CardContent>
@@ -106,7 +121,7 @@ export function Dashboard() {
         })}
       </section>
 
-      <section aria-label="Sales overview">
+      <section aria-label={t("dashboard.salesOverview")}>
         <RevenueChart />
       </section>
 
@@ -114,16 +129,16 @@ export function Dashboard() {
         <Card className="min-w-0">
           <CardHeader className="flex-row items-center justify-between pb-3">
             <div>
-              <h2 className="text-sm font-semibold text-[#2a392f]">
-                Recent sales
+              <h2 className="text-sm font-semibold text-foreground">
+                {t("dashboard.recentSales")}
               </h2>
-              <p className="mt-1 text-[11px] text-[#8c968e]">
-                Latest transactions from your store
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                {t("dashboard.latestTransactions")}
               </p>
             </div>
             <Button asChild className="px-2.5 text-xs" variant="ghost">
               <Link href="/sales">
-                View all
+                {t("common.viewAll")}
                 <ArrowRight size={14} />
               </Link>
             </Button>
@@ -137,14 +152,18 @@ export function Dashboard() {
           <Card>
             <CardHeader className="flex-row items-center justify-between pb-2">
               <div>
-                <h2 className="text-sm font-semibold text-[#2a392f]">
-                  Best sellers
+                <h2 className="text-sm font-semibold text-foreground">
+                  {t("dashboard.bestSellers")}
                 </h2>
-                <p className="mt-1 text-[11px] text-[#8c968e]">
-                  Top products this week
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  {t("dashboard.topProductsThisWeek")}
                 </p>
               </div>
-              <Button aria-label="More best seller options" size="icon" variant="ghost">
+              <Button
+                aria-label={t("common.moreBestSellerOptions")}
+                size="icon"
+                variant="ghost"
+              >
                 <span className="text-lg leading-none">···</span>
               </Button>
             </CardHeader>
@@ -152,21 +171,22 @@ export function Dashboard() {
               {bestSellers.map((product, index) => (
                 <div
                   className="flex items-center gap-3 rounded-lg px-1 py-2.5"
-                  key={product.name}
+                  key={product.key}
                 >
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f0f4ee] text-xs font-semibold text-[#617760]">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-xs font-semibold text-accent">
                     {product.initials}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs font-medium text-[#36443a]">
-                      {product.name}
+                    <p className="truncate text-xs font-medium text-foreground">
+                      {t(product.nameKey)}
                     </p>
-                    <p className="mt-1 text-[10px] text-[#98a199]">
-                      {product.units} units sold
+                    <p className="mt-1 text-[10px] text-muted-foreground">
+                      {product.units.toLocaleString(numberLocale)}{" "}
+                      {t("common.unitsSold")}
                     </p>
                   </div>
-                  <span className="text-xs font-semibold text-[#415849]">
-                    #{index + 1}
+                  <span className="text-xs font-semibold text-accent">
+                    #{(index + 1).toLocaleString(numberLocale)}
                   </span>
                 </div>
               ))}
@@ -176,33 +196,35 @@ export function Dashboard() {
           <Card>
             <CardHeader className="flex-row items-center justify-between pb-2">
               <div>
-                <h2 className="text-sm font-semibold text-[#2a392f]">
-                  Low stock alert
+                <h2 className="text-sm font-semibold text-foreground">
+                  {t("dashboard.lowStockAlert")}
                 </h2>
-                <p className="mt-1 text-[11px] text-[#8c968e]">
-                  Items that may need restocking
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  {t("dashboard.itemsMayRestock")}
                 </p>
               </div>
-              <span className="rounded-full bg-[#fff4e6] px-2 py-1 text-[10px] font-semibold text-[#b77d35]">
-                12 items
+              <span className="rounded-full bg-warning-soft px-2 py-1 text-[10px] font-semibold text-warning">
+                {stockCount.toLocaleString(numberLocale)}{" "}
+                {t("common.items")}
               </span>
             </CardHeader>
             <CardContent className="space-y-1 pt-1">
               {lowStockProducts.map((product) => (
                 <div
-                  className="flex items-center justify-between gap-3 border-t border-[#f0f2ef] py-2.5 first:border-0"
-                  key={product.name}
+                  className="flex items-center justify-between gap-3 border-t border-border py-2.5 first:border-0"
+                  key={product.nameKey}
                 >
                   <div className="min-w-0">
-                    <p className="truncate text-xs font-medium text-[#36443a]">
-                      {product.name}
+                    <p className="truncate text-xs font-medium text-foreground">
+                      {t(product.nameKey)}
                     </p>
-                    <p className="mt-1 text-[10px] text-[#98a199]">
-                      {product.category}
+                    <p className="mt-1 text-[10px] text-muted-foreground">
+                      {t(product.categoryKey)}
                     </p>
                   </div>
-                  <span className="shrink-0 rounded-md bg-[#fff4e6] px-2 py-1 text-[10px] font-semibold text-[#b77d35]">
-                    {product.stock} left
+                  <span className="shrink-0 rounded-md bg-warning-soft px-2 py-1 text-[10px] font-semibold text-warning">
+                    {product.stock.toLocaleString(numberLocale)}{" "}
+                    {t("common.left")}
                   </span>
                 </div>
               ))}
@@ -212,7 +234,7 @@ export function Dashboard() {
                 variant="ghost"
               >
                 <Link href="/inventory">
-                  Review inventory
+                  {t("dashboard.reviewInventory")}
                   <ArrowRight size={14} />
                 </Link>
               </Button>

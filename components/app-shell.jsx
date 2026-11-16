@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { Sidebar } from "@/components/sidebar";
 import { Topbar } from "@/components/topbar";
+import { useLocale } from "@/components/providers/locale-provider";
 
 export function AppShell({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { t } = useLocale();
 
   return (
-    <div className="min-h-screen md:pl-[256px]">
+    <div className="min-h-screen bg-background text-foreground md:pl-[256px] rtl:md:pl-0 rtl:md:pr-[256px]">
       <Sidebar
         isOpen={sidebarOpen}
         onNavigate={() => setSidebarOpen(false)}
@@ -16,7 +18,7 @@ export function AppShell({ children }) {
       />
       {sidebarOpen ? (
         <button
-          aria-label="Close navigation"
+          aria-label={t("common.closeNavigation")}
           className="fixed inset-0 z-30 bg-slate-950/40 md:hidden"
           onClick={() => setSidebarOpen(false)}
           type="button"

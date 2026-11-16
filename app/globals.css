@@ -5,11 +5,46 @@
 :root {
   --background: 150 14% 97%;
   --foreground: 153 18% 13%;
+  --surface: 0 0% 100%;
+  --surface-muted: 150 12% 95%;
   --primary: 153 37% 23%;
   --primary-foreground: 0 0% 100%;
   --muted: 150 12% 94%;
   --muted-foreground: 150 6% 45%;
   --border: 150 12% 89%;
+  --accent: 148 24% 36%;
+  --accent-soft: 112 31% 94%;
+  --positive: 132 29% 42%;
+  --positive-soft: 120 33% 95%;
+  --warning: 32 48% 43%;
+  --warning-soft: 38 100% 94%;
+  --chart-grid: #edf0ec;
+  --chart-text: #98a199;
+  --chart-line: #638b68;
+  --chart-active: #4b7753;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: 153 18% 9%;
+  --foreground: 140 18% 91%;
+  --surface: 153 15% 13%;
+  --surface-muted: 153 13% 17%;
+  --primary: 139 28% 66%;
+  --primary-foreground: 153 22% 12%;
+  --muted: 153 13% 17%;
+  --muted-foreground: 151 9% 67%;
+  --border: 152 11% 23%;
+  --accent: 136 31% 72%;
+  --accent-soft: 151 17% 21%;
+  --positive: 130 40% 72%;
+  --positive-soft: 146 19% 19%;
+  --warning: 36 76% 71%;
+  --warning-soft: 34 27% 20%;
+  --chart-grid: #34443a;
+  --chart-text: #9baa9d;
+  --chart-line: #9bc49d;
+  --chart-active: #b7d9a8;
 }
 
 * {
@@ -20,8 +55,13 @@ body {
   margin: 0;
   background: hsl(var(--background));
   color: hsl(var(--foreground));
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Inter Variable", "Noto Sans Arabic Variable", sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+html[dir="rtl"] body {
+  font-family: "Noto Sans Arabic Variable", "Inter Variable", sans-serif;
+  letter-spacing: 0;
 }
 
 button,
@@ -31,8 +71,8 @@ select {
 }
 
 ::selection {
-  background: #d7e8dc;
-  color: #173a29;
+  background: hsl(var(--accent-soft));
+  color: hsl(var(--foreground));
 }
 
 .scrollbar-hidden {

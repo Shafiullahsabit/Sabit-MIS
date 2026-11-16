@@ -22,6 +22,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { navigationGroups } from "@/lib/navigation";
+import { useLocale } from "@/components/providers/locale-provider";
 
 const icons = {
   dashboard: LayoutDashboard,
@@ -40,12 +41,13 @@ const icons = {
 
 export function Sidebar({ isOpen, onNavigate, onClose }) {
   const pathname = usePathname();
+  const { numberLocale, t } = useLocale();
 
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-40 flex w-[256px] flex-col bg-[#18251e] text-white transition-transform duration-200 md:translate-x-0",
-        isOpen ? "translate-x-0" : "-translate-x-full",
+        "fixed inset-y-0 left-0 z-40 flex w-[256px] flex-col bg-[#18251e] text-white transition-transform duration-200 md:translate-x-0 rtl:left-auto rtl:right-0",
+        isOpen ? "translate-x-0" : "-translate-x-full rtl:translate-x-full",
       )}
     >
       <div className="flex h-[76px] items-center justify-between border-b border-white/[0.08] px-5">
@@ -53,7 +55,7 @@ export function Sidebar({ isOpen, onNavigate, onClose }) {
           className="flex items-center gap-3"
           href="/"
           onClick={onNavigate}
-          aria-label="Sabit Super Store dashboard"
+          aria-label={t("common.dashboardHome")}
         >
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#b7d9a8] text-[#183323]">
             <ShoppingBasket size={21} strokeWidth={2.2} />
@@ -63,12 +65,12 @@ export function Sidebar({ isOpen, onNavigate, onClose }) {
               SABIT
             </span>
             <span className="mt-1 block text-[10px] font-medium tracking-[0.17em] text-white/55">
-              SUPER STORE
+              {t("store.brand")}
             </span>
           </span>
         </Link>
         <Button
-          aria-label="Close navigation"
+          aria-label={t("common.closeNavigation")}
           className="text-white/60 hover:bg-white/10 hover:text-white md:hidden"
           onClick={onClose}
           size="icon"
@@ -83,9 +85,11 @@ export function Sidebar({ isOpen, onNavigate, onClose }) {
           <ShoppingBasket size={17} />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-xs font-semibold">Main branch</span>
+          <span className="block truncate text-xs font-semibold">
+            {t("common.mainBranch")}
+          </span>
           <span className="mt-1 block text-[10px] text-white/50">
-            Kabul, Afghanistan
+            {t("store.location")}
           </span>
         </span>
         <span
@@ -95,13 +99,13 @@ export function Sidebar({ isOpen, onNavigate, onClose }) {
       </div>
 
       <nav
-        aria-label="Main navigation"
+        aria-label={t("common.mainNavigation")}
         className="scrollbar-hidden mt-6 flex-1 space-y-6 overflow-y-auto px-3 pb-5"
       >
         {navigationGroups.map((group) => (
           <div key={group.label}>
             <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/35">
-              {group.label}
+              {t(`navigation.groups.${group.key}`)}
             </p>
             <ul className="space-y-1">
               {group.items.map((item) => {
@@ -131,7 +135,9 @@ export function Sidebar({ isOpen, onNavigate, onClose }) {
                         size={17}
                         strokeWidth={1.8}
                       />
-                      <span className="flex-1">{item.label}</span>
+                      <span className="flex-1">
+                        {t(`navigation.${item.key}`)}
+                      </span>
                       {item.key === "inventory" ? (
                         <span
                           className={cn(
@@ -141,7 +147,7 @@ export function Sidebar({ isOpen, onNavigate, onClose }) {
                               : "bg-[#edb968]/15 text-[#edc487]",
                           )}
                         >
-                          12
+                          {new Intl.NumberFormat(numberLocale).format(12)}
                         </span>
                       ) : null}
                     </Link>
@@ -161,7 +167,7 @@ export function Sidebar({ isOpen, onNavigate, onClose }) {
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs font-semibold">Sabit H.</p>
             <p className="mt-0.5 truncate text-[10px] text-white/45">
-              Store administrator
+              {t("common.storeAdministrator")}
             </p>
           </div>
           <PanelLeftClose className="text-white/35" size={16} />
