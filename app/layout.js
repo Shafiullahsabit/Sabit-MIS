@@ -5,6 +5,7 @@ import { AppShell } from "@/components/app-shell";
 import { AppProviders } from "@/components/providers/app-providers";
 
 export const metadata = {
+  applicationName: "Sabit Super Store",
   title: "Sabit Super Store | Management Information System",
   description:
     "A clear, practical overview of sales, inventory, and store performance at Sabit Super Store.",

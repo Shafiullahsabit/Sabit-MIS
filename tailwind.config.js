@@ -34,6 +34,23 @@ module.exports = {
           foreground: "hsl(var(--muted-foreground))",
         },
         border: "hsl(var(--border))",
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          muted: "hsl(var(--sidebar-muted))",
+          border: "hsl(var(--sidebar-border) / 0.1)",
+          card: "hsl(var(--sidebar-card))",
+          icon: {
+            DEFAULT: "hsl(var(--sidebar-icon))",
+            foreground: "hsl(var(--sidebar-icon-foreground))",
+            muted: "hsl(var(--sidebar-icon-muted))",
+          },
+          hover: "hsl(var(--sidebar-hover) / 0.07)",
+          active: "hsl(var(--sidebar-active))",
+          "active-foreground": "hsl(var(--sidebar-active-foreground))",
+          indicator: "hsl(var(--sidebar-indicator))",
+          "badge-active": "hsl(var(--sidebar-badge-active))",
+        },
       },
       boxShadow: {
         soft: "0 2px 12px rgba(20, 33, 25, 0.045)",

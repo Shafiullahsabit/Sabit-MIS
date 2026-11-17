@@ -3,24 +3,26 @@
 import {
   Bell,
   ChevronDown,
+  Leaf,
   Languages,
   Menu,
-  Monitor,
   Moon,
   Search,
-  Sun,
 } from "lucide-react";
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/providers/locale-provider";
+import { navigationGroups } from "@/lib/navigation";
 
-const themeOrder = ["system", "light", "dark"];
+const themes = ["green", "dark"];
 const subscribeToHydration = () => () => {};
 const getHydrationSnapshot = () => true;
 const getServerHydrationSnapshot = () => false;
 
 export function Topbar({ onMenuClick }) {
+  const pathname = usePathname();
   const { locale, setLocale, t } = useLocale();
   const { setTheme, theme } = useTheme();
   const mounted = useSyncExternalStore(
@@ -29,15 +31,24 @@ export function Topbar({ onMenuClick }) {
     getServerHydrationSnapshot,
   );
 
-  const activeTheme =
-    mounted && themeOrder.includes(theme) ? theme : "system";
-  const nextTheme =
-    themeOrder[(themeOrder.indexOf(activeTheme) + 1) % themeOrder.length];
-  const ThemeIcon =
-    activeTheme === "dark" ? Moon : activeTheme === "light" ? Sun : Monitor;
+  const activeTheme = mounted && theme === "dark" ? "dark" : "green";
+  const nextTheme = activeTheme === "dark" ? "green" : "dark";
+  const ThemeIcon = activeTheme === "dark" ? Moon : Leaf;
+  const activeItem = navigationGroups
+    .flatMap((group) => group.items)
+    .find((item) => item.href === pathname);
+  const pageTitle = activeItem
+    ? t(`navigation.${activeItem.key}`)
+    : t("navigation.dashboard");
+
+  useEffect(() => {
+    if (mounted && !themes.includes(theme)) {
+      setTheme("green");
+    }
+  }, [mounted, setTheme, theme]);
 
   return (
-    <header className="sticky top-0 z-20 flex h-[76px] items-center justify-between border-b border-border bg-surface/95 px-3 backdrop-blur sm:px-6 lg:px-9">
+    <header className="sticky top-0 z-20 flex h-[76px] items-center justify-between border-b border-border bg-surface/95 px-3 shadow-[0_3px_14px_rgba(20,33,25,0.025)] backdrop-blur-xl sm:px-6 lg:px-9">
       <div className="flex min-w-0 items-center gap-3">
         <Button
           aria-label={t("common.openNavigation")}
@@ -52,7 +63,7 @@ export function Topbar({ onMenuClick }) {
           <span className="text-muted-foreground">{t("store.name")}</span>
           <span className="text-muted-foreground">/</span>
           <span className="font-semibold text-foreground">
-            {t("navigation.dashboard")}
+            {pageTitle}
           </span>
         </div>
         <span className="truncate text-sm font-semibold text-foreground sm:hidden">
@@ -96,14 +107,15 @@ export function Topbar({ onMenuClick }) {
         </label>
         <Button
           aria-label={`${t("common.appearance")}: ${t(`common.${activeTheme}`)}`}
-          className="text-muted-foreground"
+          aria-pressed={activeTheme === "dark"}
+          className="text-muted-foreground hover:text-accent"
           disabled={!mounted}
           onClick={() => setTheme(nextTheme)}
           size="icon"
           title={`${t("common.appearance")}: ${t(`common.${activeTheme}`)}`}
           variant="ghost"
         >
-          <ThemeIcon size={17} strokeWidth={1.8} />
+          <ThemeIcon size={18} strokeWidth={1.8} />
         </Button>
         <Button
           aria-label={t("common.notifications")}

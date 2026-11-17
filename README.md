@@ -26,8 +26,8 @@ Run a production build with `npm run build`, then serve it locally with
 - **Currency:** AFN, formatted centrally in `lib/format.js`
 - **Localization foundation:** one document locale and centralized number
   formatting, with English, Dari, and Pashto message dictionaries in `messages/`
-- **Themes:** light, dark, and system appearance modes, with the sage/cream
-  palette adapted for dark mode
+- **Themes:** Green (default) and Dark appearance modes, using a consistent
+  forest-green retail palette
 - **Typography:** self-hosted Inter Variable and Noto Sans Arabic Variable for
   English and RTL Dari/Pashto content
 - **Initial data:** `lib/sample-data.js`, kept separate from presentation
@@ -39,13 +39,22 @@ inventory, suppliers, purchases, customers, sales, expenses, reports, employees,
 and settings are wired into the navigation as clearly marked placeholders; no
 business workflows or persistence are implemented in this phase.
 
-## Supabase integration
+## Supabase database
 
-The dashboard currently reads from the sample-data module and does not require
-credentials. In a later phase, replace or adapt that data boundary with
-server-side Supabase queries and add Supabase Auth, PostgreSQL migrations, and
-row-level security policies. Do not commit project secrets; use local
-environment variables and Vercel environment settings when integration begins.
+The repository includes a Supabase PostgreSQL schema, migrations, role and
+permission seed data, row-level security, and transactional database functions.
+The current dashboard still reads from `lib/sample-data.js`; application
+authentication, data fetching, and POS workflows are not connected in this
+database phase.
+
+See [docs/database.md](./docs/database.md) for the schema and relationships and
+[docs/supabase-setup.md](./docs/supabase-setup.md) for local/hosted setup and
+secure provisioning of the first two administrators and two cashiers. Never
+commit credentials or expose a Supabase service-role key to browser code.
+
+The Supabase CLI uses `supabase/config.toml` and `supabase/seed.sql`. Use
+`supabase db reset` for a local database (migrations and seed), and
+`supabase test db` to run the database contract tests.
 
 ## Project layout
 
@@ -57,4 +66,8 @@ components/
   ui/                 Shared UI primitives
 lib/                  Navigation, locale config, sample data, formatting
 messages/             English, Pashto, and Dari JSON dictionaries
+supabase/
+  migrations/         PostgreSQL schema, security, and transaction migrations
+  tests/              pgTAP database contract tests
+docs/                 Database and secure Supabase setup documentation
 ```

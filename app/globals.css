@@ -3,48 +3,75 @@
 @tailwind utilities;
 
 :root {
-  --background: 150 14% 97%;
-  --foreground: 153 18% 13%;
+  color-scheme: light;
+  --background: 150 24% 97%;
+  --foreground: 153 22% 13%;
   --surface: 0 0% 100%;
-  --surface-muted: 150 12% 95%;
-  --primary: 153 37% 23%;
+  --surface-muted: 145 18% 95%;
+  --primary: 150 44% 24%;
   --primary-foreground: 0 0% 100%;
-  --muted: 150 12% 94%;
-  --muted-foreground: 150 6% 45%;
-  --border: 150 12% 89%;
-  --accent: 148 24% 36%;
-  --accent-soft: 112 31% 94%;
-  --positive: 132 29% 42%;
-  --positive-soft: 120 33% 95%;
+  --muted: 145 16% 94%;
+  --muted-foreground: 151 9% 42%;
+  --border: 148 15% 88%;
+  --accent: 148 42% 31%;
+  --accent-soft: 112 31% 93%;
+  --positive: 132 35% 36%;
+  --positive-soft: 120 34% 94%;
   --warning: 32 48% 43%;
   --warning-soft: 38 100% 94%;
-  --chart-grid: #edf0ec;
-  --chart-text: #98a199;
-  --chart-line: #638b68;
-  --chart-active: #4b7753;
+  --chart-grid: #e8eee8;
+  --chart-text: #747f77;
+  --chart-line: #538260;
+  --chart-active: #356642;
+  --sidebar: 151 34% 13%;
+  --sidebar-foreground: 140 24% 95%;
+  --sidebar-muted: 145 12% 70%;
+  --sidebar-border: 145 15% 100%;
+  --sidebar-card: 150 24% 17%;
+  --sidebar-icon: 150 23% 22%;
+  --sidebar-icon-foreground: 99 40% 81%;
+  --sidebar-icon-muted: 145 12% 64%;
+  --sidebar-hover: 145 20% 100%;
+  --sidebar-active: 98 37% 88%;
+  --sidebar-active-foreground: 150 42% 20%;
+  --sidebar-indicator: 148 40% 35%;
+  --sidebar-badge-active: 100 35% 77%;
 }
 
 .dark {
   color-scheme: dark;
-  --background: 153 18% 9%;
-  --foreground: 140 18% 91%;
-  --surface: 153 15% 13%;
-  --surface-muted: 153 13% 17%;
-  --primary: 139 28% 66%;
-  --primary-foreground: 153 22% 12%;
-  --muted: 153 13% 17%;
-  --muted-foreground: 151 9% 67%;
-  --border: 152 11% 23%;
-  --accent: 136 31% 72%;
-  --accent-soft: 151 17% 21%;
+  --background: 153 20% 8%;
+  --foreground: 140 20% 92%;
+  --surface: 153 17% 12%;
+  --surface-muted: 153 15% 16%;
+  --primary: 139 39% 66%;
+  --primary-foreground: 153 26% 11%;
+  --muted: 153 15% 16%;
+  --muted-foreground: 151 10% 68%;
+  --border: 152 12% 23%;
+  --accent: 136 35% 71%;
+  --accent-soft: 151 19% 20%;
   --positive: 130 40% 72%;
   --positive-soft: 146 19% 19%;
   --warning: 36 76% 71%;
   --warning-soft: 34 27% 20%;
-  --chart-grid: #34443a;
-  --chart-text: #9baa9d;
+  --chart-grid: #304137;
+  --chart-text: #a3b1a6;
   --chart-line: #9bc49d;
-  --chart-active: #b7d9a8;
+  --chart-active: #c3e1b5;
+  --sidebar: 153 26% 8%;
+  --sidebar-foreground: 140 20% 92%;
+  --sidebar-muted: 151 10% 66%;
+  --sidebar-border: 145 15% 100%;
+  --sidebar-card: 153 20% 12%;
+  --sidebar-icon: 153 18% 18%;
+  --sidebar-icon-foreground: 139 43% 77%;
+  --sidebar-icon-muted: 151 10% 62%;
+  --sidebar-hover: 145 20% 100%;
+  --sidebar-active: 149 23% 20%;
+  --sidebar-active-foreground: 140 31% 92%;
+  --sidebar-indicator: 139 44% 67%;
+  --sidebar-badge-active: 150 20% 29%;
 }
 
 * {
@@ -57,6 +84,10 @@ body {
   color: hsl(var(--foreground));
   font-family: "Inter Variable", "Noto Sans Arabic Variable", sans-serif;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
 }
 
 html[dir="rtl"] body {
@@ -68,6 +99,21 @@ button,
 input,
 select {
   font: inherit;
+}
+
+button,
+a,
+input,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid hsl(var(--accent));
+  outline-offset: 2px;
 }
 
 ::selection {

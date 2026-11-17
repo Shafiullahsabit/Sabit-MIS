@@ -4,17 +4,28 @@ import { useState } from "react";
 import { Sidebar } from "@/components/sidebar";
 import { Topbar } from "@/components/topbar";
 import { useLocale } from "@/components/providers/locale-provider";
+import { cn } from "@/lib/utils";
 
 export function AppShell({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { t } = useLocale();
 
   return (
-    <div className="min-h-screen bg-background text-foreground md:pl-[256px] rtl:md:pl-0 rtl:md:pr-[256px]">
+    <div
+      className={cn(
+        "min-h-screen bg-background text-foreground transition-[padding] duration-300",
+        sidebarCollapsed
+          ? "md:pl-[84px] rtl:md:pl-0 rtl:md:pr-[84px]"
+          : "md:pl-[256px] rtl:md:pl-0 rtl:md:pr-[256px]",
+      )}
+    >
       <Sidebar
+        isCollapsed={sidebarCollapsed}
         isOpen={sidebarOpen}
         onNavigate={() => setSidebarOpen(false)}
         onClose={() => setSidebarOpen(false)}
+        onToggleCollapse={() => setSidebarCollapsed((collapsed) => !collapsed)}
       />
       {sidebarOpen ? (
         <button

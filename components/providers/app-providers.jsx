@@ -7,9 +7,9 @@ export function AppProviders({ children }) {
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="system"
-      disableTransitionOnChange
-      enableSystem
+      defaultTheme="green"
+      enableSystem={false}
+      themes={["green", "dark"]}
     >
       <LocaleProvider>{children}</LocaleProvider>
     </ThemeProvider>

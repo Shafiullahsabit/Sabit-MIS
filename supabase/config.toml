@@ -1,0 +1,13 @@
+project_id = "sabit-super-store-mis"
+
+[api]
+enabled = true
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+
+[db]
+major_version = 15
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
