@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import { ModulePlaceholder } from "@/components/dashboard/module-placeholder";
+import { EmployeeManagementPage } from "@/components/employees/employee-management-page";
+import { PosTerminal } from "@/components/pos/pos-terminal";
 import { modules } from "@/lib/navigation";
 
 export function generateStaticParams() {
@@ -23,6 +25,14 @@ export default async function ModulePage({ params }) {
 
   if (!currentModule) {
     notFound();
+  }
+
+  if (currentModule.key === "employees") {
+    return <EmployeeManagementPage />;
+  }
+
+  if (currentModule.key === "pos") {
+    return <PosTerminal />;
   }
 
   return <ModulePlaceholder moduleKey={currentModule.key} />;

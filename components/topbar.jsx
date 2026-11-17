@@ -2,7 +2,6 @@
 
 import {
   Bell,
-  ChevronDown,
   Leaf,
   Languages,
   Menu,
@@ -21,7 +20,7 @@ const subscribeToHydration = () => () => {};
 const getHydrationSnapshot = () => true;
 const getServerHydrationSnapshot = () => false;
 
-export function Topbar({ onMenuClick }) {
+export function Topbar({ onMenuClick, profile }) {
   const pathname = usePathname();
   const { locale, setLocale, t } = useLocale();
   const { setTheme, theme } = useTheme();
@@ -34,6 +33,17 @@ export function Topbar({ onMenuClick }) {
   const activeTheme = mounted && theme === "dark" ? "dark" : "green";
   const nextTheme = activeTheme === "dark" ? "green" : "dark";
   const ThemeIcon = activeTheme === "dark" ? Moon : Leaf;
+  const displayName = profile?.displayName || t("common.employee");
+  const initials = displayName
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+  const roleName = profile?.roleCode
+    ? t(`employees.roles.${profile.roleCode}`)
+    : profile?.roleName || "";
   const activeItem = navigationGroups
     .flatMap((group) => group.items)
     .find((item) => item.href === pathname);
@@ -127,24 +137,19 @@ export function Topbar({ onMenuClick }) {
           <span className="absolute right-[9px] top-[8px] h-1.5 w-1.5 rounded-full bg-warning ring-2 ring-surface" />
         </Button>
         <div className="hidden h-8 w-px bg-border sm:block" />
-        <button
-          aria-label={t("common.accountMenu")}
-          className="flex items-center gap-2 pl-1"
-          type="button"
-        >
+        <div className="flex items-center gap-2 pl-1">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-soft text-[11px] font-bold text-accent sm:h-9 sm:w-9">
-            SH
+            {initials}
           </span>
           <span className="hidden text-left md:block rtl:text-right">
             <span className="block text-xs font-semibold text-foreground">
-              Sabit H.
+              {displayName}
             </span>
             <span className="mt-0.5 block text-[10px] text-muted-foreground">
-              {t("common.administrator")}
+              {roleName}
             </span>
           </span>
-          <ChevronDown className="hidden text-muted-foreground md:block" size={14} />
-        </button>
+        </div>
       </div>
     </header>
   );

@@ -13,9 +13,10 @@
   Supabase service-role key in browser code, a `NEXT_PUBLIC_*` variable, source
   control, or client logs.
 
-The current Next.js interface still uses sample data. This guide provisions the
-database and Auth accounts; it does not connect the frontend or implement POS
-screens.
+The dashboard reads sales and inventory data from Supabase using the signed-in
+employee's session. The POS remains a non-persistent sample-data interface;
+other retail modules are not connected to live records yet. Sign-in, invite
+acceptance, and administrator-managed employee invitations use Supabase Auth.
 
 ## Local Supabase
 
@@ -56,6 +57,28 @@ local database data; do not use it as a hosted-project reset command.
 
 The schema uses PostgreSQL 15+ view security options. The included local
 configuration targets PostgreSQL 15.
+
+## Configure the application
+
+1. Copy `.env.example` to `.env.local` in the repository root and set:
+   - `NEXT_PUBLIC_SUPABASE_URL` to the project's API URL.
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to its publishable key (or legacy
+     anon key). This value is public; database access is controlled by RLS.
+   - `SUPABASE_SECRET_KEY` to a server-only Supabase secret key. Keep it out of
+     `NEXT_PUBLIC_*` variables, source control, and browser code. It is used
+     only by the server to send Auth invitations.
+2. In **Authentication → URL Configuration**, set the local Site URL to
+   `http://localhost:3000` and add `http://localhost:3000/auth/confirm` to the
+   allowed redirect URLs. Add the equivalent production callback URL for the
+   deployed site. The invitation API passes this callback to Supabase Auth.
+3. Configure an email provider suitable for sending staff invitations. Supabase
+   project defaults may be rate-limited; configure production SMTP before
+   inviting real employees.
+4. Keep public/self-service signups disabled. Start the app with `npm run dev`
+   and visit `/sign-in`. Do not send credentials or secret keys in chat.
+5. Add the same three environment variables in the Vercel project's
+   Environment Variables settings. Limit the secret key to the server
+   environment(s) that need employee invitations.
 
 ## Provision the first four employees
 
@@ -147,30 +170,33 @@ in source control.
 
 ## Adding or managing employees after bootstrap
 
-For a new employee, a trusted server-side route or operator should invite the
-user through the Supabase Auth Admin API using a server-only service-role key.
-The Auth trigger creates an inactive Cashier profile. An authorized Admin then
-calls `admin_update_employee` through the Admin's authenticated user session to
-set the role, employee fields, and active state. If a server route proxies the
-RPC, it must forward/verify the requesting Admin's user JWT; calling the RPC
-with only a service-role token has no employee identity and is not an
-administrator action.
+An active administrator with `employees.manage` can invite staff from the
+Employees module. The server sends the email invitation using the
+`SUPABASE_SECRET_KEY`, then assigns the role, employee details, and active
+status by calling `admin_update_employee` with that administrator's
+authenticated session. The service key is never sent to the browser or used
+for the permission-checked RPC. The employee follows the email link and sets
+their own password; `/sign-up` does not allow self-registration.
 
 The RPC prevents an administrator from deactivating or demoting themselves or
 removing the last active administrator. Employee passwords, invites, and Auth
 email addresses remain in Supabase Auth, not `profiles`.
 
+If the invitation email is sent but profile assignment fails, the new profile
+remains inactive as created by the Auth trigger. Review that user in Supabase
+before retrying; do not create a second invitation blindly.
+
 ## Application integration notes
 
-When application integration is implemented:
-
-- The Supabase project URL and publishable/anon key may be used by the browser;
-  RLS remains the security boundary.
-- The service-role key belongs only in a server-side secret store (for example,
-  a protected deployment environment variable). Never prefix it with
-  `NEXT_PUBLIC_`.
+- Sign-in and employee profile checks use the cookie-backed Supabase SSR
+  clients; protected pages verify the Auth user, profile, active status, and
+  role.
+- The service/secret key is used only for the Auth Admin invitation endpoint.
+  Never prefix it with `NEXT_PUBLIC_`.
 - Use the user's session for permission-checked RPCs. Do not duplicate sales,
   purchase receiving, inventory adjustment, payment, or return logic in client
   code.
-- The dashboard currently reads `lib/sample-data.js`; adding a client library,
-  auth screens, or live queries is outside this database implementation.
+- The dashboard reads sales, sales items, customers, and low-stock data from
+  Supabase using the signed-in employee's session and database row-level
+  security. The POS remains an explicitly labeled, non-persistent demo until
+  its cash-session and sale-completion workflow is connected.

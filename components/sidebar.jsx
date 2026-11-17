@@ -9,6 +9,7 @@ import {
   CircleDollarSign,
   CreditCard,
   LayoutDashboard,
+  LogOut,
   Package,
   PanelLeftClose,
   PanelLeftOpen,
@@ -24,6 +25,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { navigationGroups } from "@/lib/navigation";
 import { useLocale } from "@/components/providers/locale-provider";
+import { signOut } from "@/app/(protected)/actions";
 
 const icons = {
   dashboard: LayoutDashboard,
@@ -46,9 +48,30 @@ export function Sidebar({
   onNavigate,
   onClose,
   onToggleCollapse,
+  canManageEmployees,
+  profile,
 }) {
   const pathname = usePathname();
   const { numberLocale, t } = useLocale();
+  const visibleGroups = navigationGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter(
+        (item) => item.key !== "employees" || canManageEmployees,
+      ),
+    }))
+    .filter((group) => group.items.length > 0);
+  const displayName = profile?.displayName || t("common.employee");
+  const initials = displayName
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+  const roleName = profile?.roleCode
+    ? t(`employees.roles.${profile.roleCode}`)
+    : profile?.roleName || "";
 
   return (
     <aside
@@ -150,7 +173,7 @@ export function Sidebar({
         aria-label={t("common.mainNavigation")}
         className="scrollbar-hidden mt-6 flex-1 space-y-6 overflow-y-auto px-3 pb-5"
       >
-        {navigationGroups.map((group) => (
+        {visibleGroups.map((group) => (
           <div key={group.label}>
             <p
               className={cn(
@@ -232,16 +255,32 @@ export function Sidebar({
           )}
         >
           <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#d7e9c9] text-xs font-bold text-[#26422f]">
-            SH
+            {initials}
             <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-sidebar bg-[#9bd286]" />
           </div>
           <div className={cn("min-w-0 flex-1", isCollapsed && "md:hidden")}>
-            <p className="truncate text-xs font-semibold">Sabit H.</p>
+            <p className="truncate text-xs font-semibold">{displayName}</p>
             <p className="mt-0.5 truncate text-[10px] text-sidebar-muted">
-              {t("common.storeAdministrator")}
+              {roleName}
             </p>
           </div>
         </div>
+        <form action={signOut} className={cn(isCollapsed && "md:flex md:justify-center")}>
+          <Button
+            className={cn(
+              "w-full justify-start text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground",
+              isCollapsed && "md:w-9 md:justify-center md:px-0",
+            )}
+            title={isCollapsed ? t("common.signOut") : undefined}
+            type="submit"
+            variant="ghost"
+          >
+            <LogOut size={16} />
+            <span className={cn(isCollapsed && "md:hidden")}>
+              {t("common.signOut")}
+            </span>
+          </Button>
+        </form>
       </div>
     </aside>
   );

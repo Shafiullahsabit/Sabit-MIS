@@ -6,7 +6,7 @@ import { Topbar } from "@/components/topbar";
 import { useLocale } from "@/components/providers/locale-provider";
 import { cn } from "@/lib/utils";
 
-export function AppShell({ children }) {
+export function AppShell({ canManageEmployees, children, profile }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { t } = useLocale();
@@ -21,8 +21,10 @@ export function AppShell({ children }) {
       )}
     >
       <Sidebar
+        canManageEmployees={canManageEmployees}
         isCollapsed={sidebarCollapsed}
         isOpen={sidebarOpen}
+        profile={profile}
         onNavigate={() => setSidebarOpen(false)}
         onClose={() => setSidebarOpen(false)}
         onToggleCollapse={() => setSidebarCollapsed((collapsed) => !collapsed)}
@@ -36,7 +38,10 @@ export function AppShell({ children }) {
         />
       ) : null}
       <div className="min-h-screen">
-        <Topbar onMenuClick={() => setSidebarOpen(true)} />
+        <Topbar
+          onMenuClick={() => setSidebarOpen(true)}
+          profile={profile}
+        />
         <main className="mx-auto w-full max-w-[1600px] px-4 pb-10 pt-6 sm:px-6 lg:px-9 lg:pt-8">
           {children}
         </main>

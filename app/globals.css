@@ -128,3 +128,40 @@ select:focus-visible {
 .scrollbar-hidden::-webkit-scrollbar {
   display: none;
 }
+
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .pos-bill,
+  .pos-bill * {
+    visibility: visible !important;
+  }
+
+  .pos-bill {
+    position: absolute !important;
+    inset: 0 auto auto 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #fff !important;
+    color: #111 !important;
+    box-shadow: none !important;
+  }
+
+  .pos-bill-panel {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  .pos-print-hide {
+    display: none !important;
+  }
+}

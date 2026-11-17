@@ -1,7 +1,6 @@
 import "@fontsource-variable/inter";
 import "@fontsource-variable/noto-sans-arabic";
 import "./globals.css";
-import { AppShell } from "@/components/app-shell";
 import { AppProviders } from "@/components/providers/app-providers";
 
 export const metadata = {
@@ -16,7 +15,7 @@ export default function RootLayout({ children }) {
     <html dir="ltr" lang="en" suppressHydrationWarning>
       <body>
         <AppProviders>
-          <AppShell>{children}</AppShell>
+          {children}
         </AppProviders>
       </body>
     </html>
